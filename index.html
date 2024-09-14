@@ -3,43 +3,50 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WalletConnect Example</title>
-  <script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3-provider/dist/umd/index.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/ethers/dist/ethers.min.js"></script>
+  <title>Wallet Connect - BSC</title>
+  <!-- Import Web3.js -->
+  <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+  <!-- Import WalletConnect Provider -->
+  <script src="https://unpkg.com/@walletconnect/web3-provider@1.6.6/dist/umd/index.min.js"></script>
 </head>
 <body>
-  <h1>Connect Wallet</h1>
-  <button onclick="connectWC()">Connect</button>
-  <button onclick="disconnect()">Disconnect</button>
-  <p>Your Wallet Address: <span id="address">Not connected</span></p>
-  <script>
-    var account;
+  <button id="connectWalletButton">Connect Wallet</button>
+  <p id="walletAddress">Wallet Address: Not Connected</p>
 
-    var provider = new WalletConnectProvider.default({
-      rpc: {
-        56: "https://bsc-dataseed.binance.org/",
-      },
-    });
+  <script type="text/javascript">
+    const connectWalletButton = document.getElementById("connectWalletButton");
+    const walletAddressDisplay = document.getElementById("walletAddress");
 
-    var ethersProvider;
+    // MetaMask and WalletConnect logic using Binance Smart Chain
+    async function connectWallet() {
+      if (window.ethereum) {
+        try {
+          // MetaMask connection for BSC
+          const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+          const walletAddress = accounts[0];
+          walletAddressDisplay.textContent = `Wallet Address: ${walletAddress}`;
+          console.log("Connected with MetaMask: ", walletAddress);
+        } catch (error) {
+          console.error("User rejected request");
+        }
+      } else {
+        // WalletConnect (for mobile and other wallets)
+        const provider = new WalletConnectProvider({
+          rpc: {
+            56: "https://bsc-dataseed.binance.org/",  // Mainnet BSC public node
+          },
+        });
 
-    var connectWC = async () => {
-      await provider.enable();
-      ethersProvider = new ethers.providers.Web3Provider(provider);
+        await provider.enable();
+        const web3 = new Web3(provider);
+        const accounts = await web3.eth.getAccounts();
+        const walletAddress = accounts[0];
+        walletAddressDisplay.textContent = `Wallet Address: ${walletAddress}`;
+        console.log("Connected with WalletConnect: ", walletAddress);
+      }
+    }
 
-      var signer = ethersProvider.getSigner();
-      account = await signer.getAddress();
-      document.getElementById("address").innerHTML = account;
-
-      var balance = await ethersProvider.getBalance(account);
-      console.log("See your address:", account);
-      console.log("Your balance:", ethers.utils.formatEther(balance));
-    };
-
-    var disconnect = async () => {
-      await provider.disconnect();
-      console.log("wallet disconnected");
-    };
+    connectWalletButton.addEventListener('click', connectWallet);
   </script>
 </body>
 </html>
