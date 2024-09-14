@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WalletConnect Example</title>
+  <script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3-provider/dist/umd/index.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/ethers/dist/ethers.min.js"></script>
+</head>
+<body>
+  <h1>Connect Wallet</h1>
+  <button onclick="connectWC()">Connect</button>
+  <button onclick="disconnect()">Disconnect</button>
+  <p>Your Wallet Address: <span id="address">Not connected</span></p>
+  <script>
+    var account;
+
+    var provider = new WalletConnectProvider.default({
+      rpc: {
+        56: "https://bsc-dataseed.binance.org/",
+      },
+    });
+
+    var ethersProvider;
+
+    var connectWC = async () => {
+      await provider.enable();
+      ethersProvider = new ethers.providers.Web3Provider(provider);
+
+      var signer = ethersProvider.getSigner();
+      account = await signer.getAddress();
+      document.getElementById("address").innerHTML = account;
+
+      var balance = await ethersProvider.getBalance(account);
+      console.log("See your address:", account);
+      console.log("Your balance:", ethers.utils.formatEther(balance));
+    };
+
+    var disconnect = async () => {
+      await provider.disconnect();
+      console.log("wallet disconnected");
+    };
+  </script>
+</body>
+</html>
