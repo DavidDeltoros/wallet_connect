@@ -1,3 +1,5 @@
+let account; // Use `let` so that we can reassign the wallet address later
+
 // Initialize web3 for wallet functions
 if (typeof window.ethereum !== 'undefined') {
     window.web3 = new Web3(window.ethereum);
@@ -11,7 +13,7 @@ async function connectWallet() {
     if (window.ethereum) {
         try {
             const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-            account = accounts[0];
+            account = accounts[0];  // Reassign the account value here
             document.getElementById('walletAddress').innerText = `Wallet Address: ${account}`;
             // Display balance
             getBalance();
