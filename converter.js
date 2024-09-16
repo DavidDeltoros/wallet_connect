@@ -1,3 +1,4 @@
+let tokenWeb3 = new Web3('https://bsc-dataseed.binance.org/');  // Separate Web3 instance for token functions
 let bnbPrice;
 let tokenLiquidity, wbnbLiquidity;
 let tokenAddress = '0xC481082A2cF65Bf615Bad00202DC2Af186BF5A8e'; // Default token (pw3_UR)
@@ -29,7 +30,7 @@ function convertBnbToUsdtAndCalculate() {
         const tokenResult = (wbnbLiquidity * tokenLiquidity) / (parseFloat(wbnbLiquidity) + parseFloat(bnbAmount));
 
         // Calculate the difference between tokenResult and tokenLiquidity
-        const tokenDifference = tokenLiquidity-tokenResult ;
+        const tokenDifference = tokenLiquidity - tokenResult;
 
         // Display the difference
         document.getElementById('token-difference').innerText = tokenDifference.toFixed(4);
@@ -42,11 +43,11 @@ function convertBnbToUsdtAndCalculate() {
 // Load the BNB price and token liquidity on page load or token change
 async function displayLiquidity() {
     try {
-        // Get BNB price
-        bnbPrice = await getBnbPrice();
+        // Get BNB price using the separate tokenWeb3 instance
+        bnbPrice = await getBnbPrice(); // Token web3-specific operation
         if (!bnbPrice) throw new Error("Failed to get BNB price");
 
-        // Get the liquidity for the selected token (token vs WBnB)
+        // Get the liquidity for the selected token (token vs WBnB) using tokenWeb3
         const { tokenLiquidity: tokenLiquidityData, wbnbLiquidity: wbnbLiquidityData } = await getLiquidity(tokenAddress, wbnbAddress);
 
         tokenLiquidity = tokenLiquidityData;
