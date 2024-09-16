@@ -3,13 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Wallet Connect and Send - MetaMask</title>
-  
-  <!-- Link to external CSS -->
-  <link rel="stylesheet" href="style.css">
-  
-  <!-- Web3.js Library -->
-  <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+  <title>Get Token Price</title>
+
   <!-- Link to external JavaScript file -->
   <script src="walletFunctions.js"></script>
 </head>
@@ -23,6 +18,10 @@
       <input type="number" id="amount" placeholder="Enter amount of BNB" />
       <button id="sendButton">Send BNB</button>
     </div>
+
+    <button id="getPriceButton">Get Token Price</button>
+    <p id="tokenPrice">Price: Not Available</p>
+
   </div>
 
   <script type="text/javascript">
@@ -32,7 +31,31 @@
     const sendSection = document.getElementById("sendSection");
     const walletAddressDisplay = document.getElementById("walletAddress");
     const walletBalanceDisplay = document.getElementById("walletBalance");
-    const amountInput = document.getElementById("amount"); // Reference to the amount input field
+    const amountInput = document.getElementById("amount");
+
+    // Function to get token price using CoinGecko API
+    async function getTokenPrice() {
+      const contractAddress = "0xC481082A2cF65Bf615Bad00202DC2Af186BF5A8e"; // Liquidity pair contract
+      const url = `https://api.coingecko.com/api/v3/simple/token_price/binance-smart-chain?contract_addresses=${contractAddress}&vs_currencies=usd`;
+
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        // Access the price in USD
+        const price = data[contractAddress.toLowerCase()]?.usd || "Price not available";
+
+        // Display the price in the UI
+        document.getElementById("tokenPrice").textContent = `Price: ${price} USD`;
+        console.log("Token price in USD:", price);
+      } catch (error) {
+        console.error("Error fetching token price:", error);
+        document.getElementById("tokenPrice").textContent = "Price: Error fetching price";
+      }
+    }
+
+    // Add event listener for price button
+    document.getElementById("getPriceButton").addEventListener('click', getTokenPrice);
 
     // Add real-time event listener to amount input field to log the value as the user types
     amountInput.addEventListener("input", (event) => {
