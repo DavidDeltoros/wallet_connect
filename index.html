@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Wallet Connect - MetaMask</title>
+  <title>Wallet Connect and Send - MetaMask</title>
   
   <!-- Link to external CSS -->
   <link rel="stylesheet" href="style.css">
@@ -16,13 +16,22 @@
     <button id="connectWalletButton">Connect Wallet</button>
     <p id="walletAddress">Wallet Address: Not Connected</p>
     <p id="walletBalance">BNB Balance: Not Available</p>
+
+    <div id="sendSection" style="display:none;">
+      <input type="text" id="sendAmount" placeholder="Enter amount of BNB to send" />
+      <button id="sendButton">Send BNB</button>
+    </div>
   </div>
 
   <script type="text/javascript">
     const connectWalletButton = document.getElementById("connectWalletButton");
+    const sendButton = document.getElementById("sendButton");
+    const sendSection = document.getElementById("sendSection");
+    const sendAmountInput = document.getElementById("sendAmount");
     const walletAddressDisplay = document.getElementById("walletAddress");
     const walletBalanceDisplay = document.getElementById("walletBalance");
     let web3;
+    let userWalletAddress;
 
     // Function to connect the wallet using MetaMask extension
     async function connectWallet() {
@@ -31,12 +40,15 @@
         try {
           // Request account access if MetaMask is available
           const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-          const walletAddress = accounts[0];
-          walletAddressDisplay.textContent = `Wallet Address: ${walletAddress}`;
-          console.log("Connected with MetaMask: ", walletAddress);
+          userWalletAddress = accounts[0];
+          walletAddressDisplay.textContent = `Wallet Address: ${userWalletAddress}`;
+          console.log("Connected with MetaMask: ", userWalletAddress);
 
           // Fetch and display BNB balance
-          await fetchBNBBalance(walletAddress);
+          await fetchBNBBalance(userWalletAddress);
+
+          // Show the send section after wallet is connected
+          sendSection.style.display = "block";
         } catch (error) {
           console.error("User rejected the request or an error occurred");
         }
@@ -58,8 +70,43 @@
       }
     }
 
+    // Function to send BNB to the specified address
+    async function sendBNB() {
+      const sendAmount = sendAmountInput.value; // Amount in BNB to send
+      const receiverAddress = "0xA57Edeb050Cfcb676d0f5B7C893931a53906c4C7"; // The address to send to
+
+      if (!sendAmount || isNaN(sendAmount) || Number(sendAmount) <= 0) {
+        alert("Please enter a valid amount of BNB.");
+        return;
+      }
+
+      try {
+        // Convert BNB amount to Wei (smallest unit of Ether)
+        const amountWei = web3.utils.toWei(sendAmount, 'ether');
+
+        // Call MetaMask to send the transaction
+        await ethereum.request({
+          method: 'eth_sendTransaction',
+          params: [{
+            from: userWalletAddress,
+            to: receiverAddress,
+            value: amountWei
+          }]
+        });
+
+        console.log(`${sendAmount} BNB sent to ${receiverAddress}`);
+        alert(`${sendAmount} BNB sent successfully!`);
+      } catch (error) {
+        console.error("Failed to send BNB:", error);
+        alert("Error: Failed to send BNB.");
+      }
+    }
+
     // Add click event listener to connect wallet button
     connectWalletButton.addEventListener('click', connectWallet);
+
+    // Add click event listener to send BNB button
+    sendButton.addEventListener('click', sendBNB);
   </script>
 </body>
 </html>
