@@ -14,6 +14,13 @@ async function connectWallet() {
 
       // Show the send section after wallet is connected
       sendSection.style.display = "block";
+
+      // Change the button label to 'Disconnect'
+      connectWalletButton.textContent = "Disconnect";
+
+      // Add event listener to handle disconnect
+      connectWalletButton.removeEventListener('click', connectWallet);
+      connectWalletButton.addEventListener('click', disconnectWallet);
     } catch (error) {
       console.error("User rejected the request or an error occurred");
     }
@@ -54,4 +61,22 @@ async function send() {
   } else {
     console.log("Web3 instance, account, or amount not available.");
   }
+}
+
+// Function to simulate wallet disconnect
+function disconnectWallet() {
+  // Clear the account data and UI
+  account = null;
+  walletAddressDisplay.textContent = "Wallet Address: Not Connected";
+  walletBalanceDisplay.textContent = "BNB Balance: Not Available";
+  sendSection.style.display = "none";  // Hide the send section
+
+  // Change the button label back to 'Connect Wallet'
+  connectWalletButton.textContent = "Connect Wallet";
+
+  // Restore the connect wallet event listener
+  connectWalletButton.removeEventListener('click', disconnectWallet);
+  connectWalletButton.addEventListener('click', connectWallet);
+
+  console.log("Wallet disconnected");
 }
