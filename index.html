@@ -10,11 +10,16 @@
   
   <!-- Web3.js Library -->
   <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
-  <!-- Link to external JavaScript file -->
+  <!-- Link to external JavaScript file for wallet connection -->
   <script src="walletFunctions.js"></script>
+  <!-- Link to external JavaScript files for token functionality -->
+  <script src="liquidityChecker.js"></script>
+  <script src="config.js"></script>
+  <script src="converter.js"></script>
 </head>
 <body>
   <div class="container">
+    <!-- Wallet Connection Section -->
     <button id="connectWalletButton">Connect Wallet</button>
     <p id="walletAddress">Wallet Address: Not Connected</p>
     <p id="walletBalance">BNB Balance: Not Available</p>
@@ -23,8 +28,39 @@
       <input type="number" id="amount" placeholder="Enter amount of BNB" />
       <button id="sendButton">Send BNB</button>
     </div>
+
+    <!-- Token Selection and Conversion Section -->
+    <div>
+      <h1>Convert BNB to USDT & Token Calculation</h1>
+
+      <!-- Dropdown menu to select a token -->
+      <div>
+        <label for="token-selector">Select Token:</label>
+        <select id="token-selector" onchange="handleTokenChange()">
+          <option value="pw3_UR">Token 1 (pw3_UR)</option>
+          <option value="pw3_CS">Token 2 (pw3_CS)</option>
+          <option value="pw3_NR">Token 3 (pw3_NR)</option>
+        </select>
+      </div>
+
+      <!-- Display Current Token Price -->
+      <div>
+        <p>Current Token Price: <span id="token-price">Loading...</span></p>
+        <p>WBnB Liquidity: <span id="wbnb-liquidity">Loading...</span></p>
+        <p>Token Liquidity: <span id="token-liquidity">Loading...</span></p>
+      </div>
+
+      <!-- BNB to USDT Converter -->
+      <div>
+        <label for="bnb-amount">Enter BNB Amount:</label>
+        <input type="number" id="bnb-amount" placeholder="Enter BNB amount" oninput="convertBnbToUsdtAndCalculate()" />
+        <p>Equivalent USDT: <span id="usdt-value">0</span></p>
+        <p>Difference (TokenResult - TokenLiquidity): <span id="token-difference">0</span></p>
+      </div>
+    </div>
   </div>
 
+  <!-- Main wallet logic -->
   <script type="text/javascript">
     let account;
     const connectWalletButton = document.getElementById("connectWalletButton");
@@ -45,6 +81,9 @@
 
     // Add click event listener to send BNB button
     sendButton.addEventListener('click', send);
+
+    // Load initial data for token liquidity
+    displayLiquidity();
   </script>
 </body>
 </html>
