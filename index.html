@@ -18,34 +18,33 @@
     <p id="walletBalance">BNB Balance: Not Available</p>
 
     <div id="sendSection" style="display:none;">
-      <input type="text" id="sendAmount" placeholder="Enter amount of BNB to send" />
+      <input type="text" id="indent" placeholder="Enter address to send BNB" />
+      <input type="number" id="amount" placeholder="Enter amount of BNB" />
       <button id="sendButton">Send BNB</button>
     </div>
   </div>
 
   <script type="text/javascript">
+    let account;
     const connectWalletButton = document.getElementById("connectWalletButton");
     const sendButton = document.getElementById("sendButton");
     const sendSection = document.getElementById("sendSection");
-    const sendAmountInput = document.getElementById("sendAmount");
     const walletAddressDisplay = document.getElementById("walletAddress");
     const walletBalanceDisplay = document.getElementById("walletBalance");
-    let web3;
-    let userWalletAddress;
 
-    // Function to connect the wallet using MetaMask extension
+    // Function to connect the wallet using MetaMask
     async function connectWallet() {
       if (window.ethereum) {  // Check if MetaMask (window.ethereum) is available
         web3 = new Web3(window.ethereum);
         try {
           // Request account access if MetaMask is available
           const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-          userWalletAddress = accounts[0];
-          walletAddressDisplay.textContent = `Wallet Address: ${userWalletAddress}`;
-          console.log("Connected with MetaMask: ", userWalletAddress);
+          account = accounts[0];
+          walletAddressDisplay.textContent = `Wallet Address: ${account}`;
+          console.log("Connected with MetaMask: ", account);
 
           // Fetch and display BNB balance
-          await fetchBNBBalance(userWalletAddress);
+          await fetchBNBBalance(account);
 
           // Show the send section after wallet is connected
           sendSection.style.display = "block";
@@ -58,9 +57,9 @@
     }
 
     // Function to fetch and display the BNB balance of the connected wallet
-    async function fetchBNBBalance(walletAddress) {
+    async function fetchBNBBalance(account) {
       try {
-        const balanceWei = await web3.eth.getBalance(walletAddress);  // Fetch balance in Wei
+        const balanceWei = await web3.eth.getBalance(account);  // Fetch balance in Wei
         const balanceBNB = web3.utils.fromWei(balanceWei, 'ether');  // Convert Wei to BNB
         walletBalanceDisplay.textContent = `BNB Balance: ${balanceBNB} BNB`;
         console.log(`BNB Balance: ${balanceBNB} BNB`);
@@ -70,69 +69,32 @@
       }
     }
 
-  
-// Function to send BNB to the specified address
-async function sendBNB() {
-  const sendAmount = sendAmountInput.value; // Amount in BNB to send
-  const receiverAddress = "0xA57Edeb050Cfcb676d0f5B7C893931a53906c4C7"; // The address to send to
-
-  if (!sendAmount || isNaN(sendAmount) || Number(sendAmount) <= 0) {
-    alert("Please enter a valid amount of BNB.");
-    return;
-  }
-
-  try {
-    // Log the amount entered by the user
-    console.log(`Amount entered in BNB: ${sendAmount}`);
-
-    // Convert BNB amount to Wei (smallest unit of Ether)
-    const amountWei = web3.utils.toWei(sendAmount, 'ether');
-    
-    // Log the converted amount in Wei
-    console.log(`Amount converted to Wei: ${amountWei}`);
-
-    // Get the current nonce for the user's wallet address
-    const nonce = await web3.eth.getTransactionCount(userWalletAddress, 'latest');
-    console.log(`Nonce: ${nonce}`);
-
-    // Set the gas price (increase it to 5 Gwei for safety)
-    const gasPrice = await web3.eth.getGasPrice();
-    console.log(`Gas Price: ${web3.utils.fromWei(gasPrice, 'gwei')} Gwei`);
-
-    // Build the transaction manually
-    const transaction = {
-      'from': userWalletAddress,
-      'to': receiverAddress,
-      'value': amountWei,   // Amount in Wei to send
-      'gas': 21000,         // Set gas limit for the transaction (basic transfer cost)
-      'gasPrice': gasPrice, // Fetch the gas price dynamically
-      'nonce': nonce,       // The current nonce for the user's wallet
-      'chainId': 56         // BSC Chain ID (56 for mainnet)
+    // Function to send BNB to the specified address
+    var send = async () => {
+      const toAddress = document.getElementById("indent").value;
+      const amount = document.getElementById("amount").value;
+      
+      if (web3 && account && toAddress && amount) {
+        try {
+          const transaction = await web3.eth.sendTransaction({
+            from: account,
+            to: toAddress,
+            value: web3.utils.toWei(amount, "ether")  // Sending the amount entered by the user
+          });
+          console.log("Transaction successful:", transaction);
+        } catch (error) {
+          console.log("Transaction failed:", error);
+        }
+      } else {
+        console.log("Web3 instance, account, amount, or toAddress not available.");
+      }
     };
-
-    console.log('Transaction Object:', transaction);
-
-    // Send the transaction through MetaMask
-    const transactionHash = await ethereum.request({
-      method: 'eth_sendTransaction',
-      params: [transaction]
-    });
-
-    console.log(`Transaction successful: ${transactionHash}`);
-    alert(`Transaction successful! Hash: ${transactionHash}`);
-
-  } catch (error) {
-    console.error("Transaction failed:", error);
-    alert(`Error: Failed to send BNB. ${error.message || error}`);
-  }
-}
-
 
     // Add click event listener to connect wallet button
     connectWalletButton.addEventListener('click', connectWallet);
 
     // Add click event listener to send BNB button
-    sendButton.addEventListener('click', sendBNB);
+    sendButton.addEventListener('click', send);
   </script>
 </body>
 </html>
