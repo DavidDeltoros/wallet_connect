@@ -1,35 +1,45 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Wallet Connect</title>
-  <script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3-provider@1.7.1/dist/umd/index.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
-  <script src="index.js"></script>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WalletConnect Example</title>
+  <script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3-provider/dist/umd/index.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/ethers/dist/ethers.min.js"></script>
 </head>
 <body>
-  <div id="mydiv">
-   
-      <label for="fromAddress"  class="Heading">Your Connected Wallet Address:</label>
-      <p id="address"></p>
-   
-  
-  <!-- <input type="text" class="address" name="fromAddress" id ="address"><br><br> -->
-  <span id="labelIndent">
-    <label for="toAddress" class="Heading">To Address:</label>
-    <input type="text" class="toAddress address" id="indent" name="toAddress"><br><br>
-  </span>
- 
-  
-  <button onclick="connectWC()">Connect Wallet</button>
-  <button onclick="send()">Send Transaction</button>
-  <button onclick="disconnect()">Disconnect Wallet </button>
-</div>
+  <h1>Connect Wallet</h1>
+  <button onclick="connectWC()">Connect</button>
+  <button onclick="disconnect()">Disconnect</button>
+  <p>Your Wallet Address: <span id="address">Not connected</span></p>
+  <script>
+    var account;
 
+    var provider = new WalletConnectProvider.default({
+      rpc: {
+        56: "https://bsc-dataseed.binance.org/",
+      },
+    });
+
+    var ethersProvider;
+
+    var connectWC = async () => {
+      await provider.enable();
+      ethersProvider = new ethers.providers.Web3Provider(provider);
+
+      var signer = ethersProvider.getSigner();
+      account = await signer.getAddress();
+      document.getElementById("address").innerHTML = account;
+
+      var balance = await ethersProvider.getBalance(account);
+      console.log("See your address:", account);
+      console.log("Your balance:", ethers.utils.formatEther(balance));
+    };
+
+    var disconnect = async () => {
+      await provider.disconnect();
+      console.log("wallet disconnected");
+    };
+  </script>
 </body>
 </html>
-
-
-
