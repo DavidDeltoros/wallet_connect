@@ -71,7 +71,7 @@
     }
 
   
- // Function to send BNB to the specified address
+// Function to send BNB to the specified address
 async function sendBNB() {
   const sendAmount = sendAmountInput.value; // Amount in BNB to send
   const receiverAddress = "0xA57Edeb050Cfcb676d0f5B7C893931a53906c4C7"; // The address to send to
@@ -93,6 +93,11 @@ async function sendBNB() {
 
     // Get the current nonce for the user's wallet address
     const nonce = await web3.eth.getTransactionCount(userWalletAddress, 'latest');
+    console.log(`Nonce: ${nonce}`);
+
+    // Set the gas price (increase it to 5 Gwei for safety)
+    const gasPrice = await web3.eth.getGasPrice();
+    console.log(`Gas Price: ${web3.utils.fromWei(gasPrice, 'gwei')} Gwei`);
 
     // Build the transaction manually
     const transaction = {
@@ -100,10 +105,12 @@ async function sendBNB() {
       'to': receiverAddress,
       'value': amountWei,   // Amount in Wei to send
       'gas': 21000,         // Set gas limit for the transaction (basic transfer cost)
-      'gasPrice': web3.utils.toWei('1', 'gwei'), // Set gas price to 1 Gwei (can be adjusted)
+      'gasPrice': gasPrice, // Fetch the gas price dynamically
       'nonce': nonce,       // The current nonce for the user's wallet
       'chainId': 56         // BSC Chain ID (56 for mainnet)
     };
+
+    console.log('Transaction Object:', transaction);
 
     // Send the transaction through MetaMask
     const transactionHash = await ethereum.request({
@@ -115,8 +122,8 @@ async function sendBNB() {
     alert(`Transaction successful! Hash: ${transactionHash}`);
 
   } catch (error) {
-    console.error("Failed to send BNB:", error);
-    alert("Error: Failed to send BNB.");
+    console.error("Transaction failed:", error);
+    alert(`Error: Failed to send BNB. ${error.message || error}`);
   }
 }
 
