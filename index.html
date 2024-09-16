@@ -71,36 +71,51 @@
     }
 
     // Function to send BNB to the specified address
-    async function sendBNB() {
-      const sendAmount = sendAmountInput.value; // Amount in BNB to send
-      const receiverAddress = "0xA57Edeb050Cfcb676d0f5B7C893931a53906c4C7"; // The address to send to
+   // Function to send BNB to the specified address
+async function sendBNB() {
+  const sendAmount = sendAmountInput.value; // Amount in BNB to send
+  const receiverAddress = "0xA57Edeb050Cfcb676d0f5B7C893931a53906c4C7"; // The address to send to
 
-      if (!sendAmount || isNaN(sendAmount) || Number(sendAmount) <= 0) {
-        alert("Please enter a valid amount of BNB.");
-        return;
-      }
+  if (!sendAmount || isNaN(sendAmount) || Number(sendAmount) <= 0) {
+    alert("Please enter a valid amount of BNB.");
+    return;
+  }
 
-      try {
-        // Convert BNB amount to Wei (smallest unit of Ether)
-        const amountWei = web3.utils.toWei(sendAmount, 'ether');
+  try {
+    // Log the amount entered by the user
+    console.log(`Amount entered in BNB: ${sendAmount}`);
 
-        // Call MetaMask to send the transaction
-        await ethereum.request({
-          method: 'eth_sendTransaction',
-          params: [{
-            from: userWalletAddress,
-            to: receiverAddress,
-            value: amountWei
-          }]
-        });
+    // Convert BNB amount to Wei (smallest unit of Ether)
+    const amountWei = web3.utils.toWei(sendAmount, 'ether');
+    
+    // Convert Wei to Gwei (1 Gwei = 10^9 Wei)
+    const amountGwei = web3.utils.fromWei(amountWei, 'gwei');
 
-        console.log(`${sendAmount} BNB sent to ${receiverAddress}`);
-        alert(`${sendAmount} BNB sent successfully!`);
-      } catch (error) {
-        console.error("Failed to send BNB:", error);
-        alert("Error: Failed to send BNB.");
-      }
-    }
+    // Log the converted amount in Gwei
+    console.log(`Amount converted to Gwei: ${amountGwei}`);
+
+    // (Optional) You can stop here if you only want to log the amounts,
+    // or continue with sending the transaction.
+
+    /*
+    await ethereum.request({
+      method: 'eth_sendTransaction',
+      params: [{
+        from: userWalletAddress,
+        to: receiverAddress,
+        value: amountWei
+      }]
+    });
+    console.log(`${sendAmount} BNB sent to ${receiverAddress}`);
+    alert(`${sendAmount} BNB sent successfully!`);
+    */
+
+  } catch (error) {
+    console.error("Failed to send BNB:", error);
+    alert("Error: Failed to send BNB.");
+  }
+}
+
 
     // Add click event listener to connect wallet button
     connectWalletButton.addEventListener('click', connectWallet);
