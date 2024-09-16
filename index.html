@@ -3,43 +3,67 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WalletConnect Example</title>
-  <script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3-provider/dist/umd/index.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/ethers/dist/ethers.min.js"></script>
+  <title>Wallet Connect - MetaMask</title>
+  
+  <!-- Web3.js Library -->
+  <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+  
+  <style>
+    /* Style to make the address and balance more visible */
+    #walletAddress, #walletBalance {
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+  </style>
 </head>
 <body>
-  <h1>Connect Wallet</h1>
-  <button onclick="connectWC()">Connect</button>
-  <button onclick="disconnect()">Disconnect</button>
-  <p>Your Wallet Address: <span id="address">Not connected</span></p>
-  <script>
-    var account;
+  <button id="connectWalletButton">Connect Wallet</button>
+  <p id="walletAddress">Wallet Address: Not Connected</p>
+  <p id="walletBalance">BNB Balance: Not Available</p>
 
-    var provider = new WalletConnectProvider.default({
-      rpc: {
-        56: "https://bsc-dataseed.binance.org/",
-      },
-    });
+  <script type="text/javascript">
+    const connectWalletButton = document.getElementById("connectWalletButton");
+    const walletAddressDisplay = document.getElementById("walletAddress");
+    const walletBalanceDisplay = document.getElementById("walletBalance");
+    let web3;
 
-    var ethersProvider;
+    // Function to connect the wallet using MetaMask extension
+    async function connectWallet() {
+      if (window.ethereum) {  // Check if MetaMask (window.ethereum) is available
+        web3 = new Web3(window.ethereum);
+        try {
+          // Request account access if MetaMask is available
+          const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+          const walletAddress = accounts[0];
+          walletAddressDisplay.textContent = `Wallet Address: ${walletAddress}`;
+          console.log("Connected with MetaMask: ", walletAddress);
 
-    var connectWC = async () => {
-      await provider.enable();
-      ethersProvider = new ethers.providers.Web3Provider(provider);
+          // Fetch and display BNB balance
+          await fetchBNBBalance(walletAddress);
+        } catch (error) {
+          console.error("User rejected the request or an error occurred");
+        }
+      } else {
+        alert("MetaMask extension is not installed!");
+      }
+    }
 
-      var signer = ethersProvider.getSigner();
-      account = await signer.getAddress();
-      document.getElementById("address").innerHTML = account;
+    // Function to fetch and display the BNB balance of the connected wallet
+    async function fetchBNBBalance(walletAddress) {
+      try {
+        const balanceWei = await web3.eth.getBalance(walletAddress);  // Fetch balance in Wei
+        const balanceBNB = web3.utils.fromWei(balanceWei, 'ether');  // Convert Wei to BNB
+        walletBalanceDisplay.textContent = `BNB Balance: ${balanceBNB} BNB`;
+        console.log(`BNB Balance: ${balanceBNB} BNB`);
+      } catch (error) {
+        console.error("Failed to fetch BNB balance:", error);
+        walletBalanceDisplay.textContent = `BNB Balance: Error fetching balance`;
+      }
+    }
 
-      var balance = await ethersProvider.getBalance(account);
-      console.log("See your address:", account);
-      console.log("Your balance:", ethers.utils.formatEther(balance));
-    };
-
-    var disconnect = async () => {
-      await provider.disconnect();
-      console.log("wallet disconnected");
-    };
+    // Add click event listener to connect wallet button
+    connectWalletButton.addEventListener('click', connectWallet);
   </script>
 </body>
 </html>
