@@ -5,22 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Wallet Connect - MetaMask</title>
   
+  <!-- Link to external CSS -->
+  <link rel="stylesheet" href="style.css">
+  
   <!-- Web3.js Library -->
   <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
-  
-  <style>
-    /* Style to make the address and balance more visible */
-    #walletAddress, #walletBalance {
-      font-size: 18px;
-      font-weight: bold;
-      margin-top: 10px;
-    }
-  </style>
 </head>
 <body>
-  <button id="connectWalletButton">Connect Wallet</button>
-  <p id="walletAddress">Wallet Address: Not Connected</p>
-  <p id="walletBalance">BNB Balance: Not Available</p>
+  <div class="container">
+    <button id="connectWalletButton">Connect Wallet</button>
+    <p id="walletAddress">Wallet Address: Not Connected</p>
+    <p id="walletBalance">BNB Balance: Not Available</p>
+  </div>
 
   <script type="text/javascript">
     const connectWalletButton = document.getElementById("connectWalletButton");
