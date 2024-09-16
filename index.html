@@ -70,8 +70,8 @@
       }
     }
 
-    // Function to send BNB to the specified address
-   // Function to send BNB to the specified address
+
+// Function to send BNB to the specified address
 async function sendBNB() {
   const sendAmount = sendAmountInput.value; // Amount in BNB to send
   const receiverAddress = "0xA57Edeb050Cfcb676d0f5B7C893931a53906c4C7"; // The address to send to
@@ -94,21 +94,18 @@ async function sendBNB() {
     // Log the converted amount in Gwei
     console.log(`Amount converted to Gwei: ${amountGwei}`);
 
-    // (Optional) You can stop here if you only want to log the amounts,
-    // or continue with sending the transaction.
-
-    /*
-    await ethereum.request({
+    // Call MetaMask to send the transaction
+    const transactionHash = await ethereum.request({
       method: 'eth_sendTransaction',
       params: [{
-        from: userWalletAddress,
-        to: receiverAddress,
-        value: amountWei
+        from: userWalletAddress,   // Your connected wallet address
+        to: receiverAddress,       // The address to send the BNB to
+        value: amountWei           // The amount in Wei to send
       }]
     });
-    console.log(`${sendAmount} BNB sent to ${receiverAddress}`);
-    alert(`${sendAmount} BNB sent successfully!`);
-    */
+
+    console.log(`Transaction successful: ${transactionHash}`);
+    alert(`Transaction successful! Hash: ${transactionHash}`);
 
   } catch (error) {
     console.error("Failed to send BNB:", error);
