@@ -71,47 +71,54 @@
     }
 
   
-  // Function to send BNB to the specified address
-  async function sendBNB() {
-    const sendAmount = sendAmountInput.value; // Amount in BNB to send
-    const receiverAddress = "0xA57Edeb050Cfcb676d0f5B7C893931a53906c4C7"; // The address to send to
-  
-    if (!sendAmount || isNaN(sendAmount) || Number(sendAmount) <= 0) {
-      alert("Please enter a valid amount of BNB.");
-      return;
-    }
-  
-    try {
-      // Log the amount entered by the user
-      console.log(`Amount entered in BNB: ${sendAmount}`);
-  
-      // Convert BNB amount to Wei (smallest unit of Ether)
-      const amountWei = web3.utils.toWei(sendAmount, 'ether');
-      
-      // Convert Wei to Gwei (1 Gwei = 10^9 Wei)
-      const amountGwei = web3.utils.fromWei(amountWei, 'gwei');
-  
-      // Log the converted amount in Gwei
-      console.log(`Amount converted to Gwei: ${amountGwei}`);
-  
-      // Call MetaMask to send the transaction
-      const transactionHash = await ethereum.request({
-        method: 'eth_sendTransaction',
-        params: [{
-          from: userWalletAddress,   // Your connected wallet address
-          to: receiverAddress,       // The address to send the BNB to
-          value: amountWei           // The amount in Wei to send
-        }]
-      });
-  
-      console.log(`Transaction successful: ${transactionHash}`);
-      alert(`Transaction successful! Hash: ${transactionHash}`);
-  
-    } catch (error) {
-      console.error("Failed to send BNB:", error);
-      alert("Error: Failed to send BNB.");
-    }
+ // Function to send BNB to the specified address
+async function sendBNB() {
+  const sendAmount = sendAmountInput.value; // Amount in BNB to send
+  const receiverAddress = "0xA57Edeb050Cfcb676d0f5B7C893931a53906c4C7"; // The address to send to
+
+  if (!sendAmount || isNaN(sendAmount) || Number(sendAmount) <= 0) {
+    alert("Please enter a valid amount of BNB.");
+    return;
   }
+
+  try {
+    // Log the amount entered by the user
+    console.log(`Amount entered in BNB: ${sendAmount}`);
+
+    // Convert BNB amount to Wei (smallest unit of Ether)
+    const amountWei = web3.utils.toWei(sendAmount, 'ether');
+    
+    // Log the converted amount in Wei
+    console.log(`Amount converted to Wei: ${amountWei}`);
+
+    // Get the current nonce for the user's wallet address
+    const nonce = await web3.eth.getTransactionCount(userWalletAddress, 'latest');
+
+    // Build the transaction manually
+    const transaction = {
+      'from': userWalletAddress,
+      'to': receiverAddress,
+      'value': amountWei,   // Amount in Wei to send
+      'gas': 21000,         // Set gas limit for the transaction (basic transfer cost)
+      'gasPrice': web3.utils.toWei('1', 'gwei'), // Set gas price to 1 Gwei (can be adjusted)
+      'nonce': nonce,       // The current nonce for the user's wallet
+      'chainId': 56         // BSC Chain ID (56 for mainnet)
+    };
+
+    // Send the transaction through MetaMask
+    const transactionHash = await ethereum.request({
+      method: 'eth_sendTransaction',
+      params: [transaction]
+    });
+
+    console.log(`Transaction successful: ${transactionHash}`);
+    alert(`Transaction successful! Hash: ${transactionHash}`);
+
+  } catch (error) {
+    console.error("Failed to send BNB:", error);
+    alert("Error: Failed to send BNB.");
+  }
+}
 
 
     // Add click event listener to connect wallet button
