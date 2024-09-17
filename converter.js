@@ -57,8 +57,6 @@ async function displayLiquidity() {
         const tokenPrice = (wbnbLiquidity / tokenLiquidity) * bnbPrice;
 
         // Display liquidity and token price on the webpage
-        document.getElementById('token-liquidity').innerText = tokenLiquidity.toFixed(4);
-        document.getElementById('wbnb-liquidity').innerText = wbnbLiquidity.toFixed(4);
         document.getElementById('token-price').innerText = tokenPrice.toFixed(4);
     } catch (error) {
         console.error('Error fetching liquidity or token price:', error);
