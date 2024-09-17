@@ -31,7 +31,7 @@
    
 
             <label for="token-selector">Select Token:</label>
-            <select id="token-selector" onchange="handleTokenChange()">
+            <select id="token-selector" onchange="handleTokenChange(); convertBnbToUsdtAndCalculate();">
                 <option value="pw3_UR">Token 1 (pw3_UR)</option>
                 <option value="pw3_CS">Token 2 (pw3_CS)</option>
                 <option value="pw3_NR">Token 3 (pw3_NR)</option>
