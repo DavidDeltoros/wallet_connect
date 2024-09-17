@@ -17,9 +17,9 @@ function handleTokenChange() {
     displayLiquidity(); // Update liquidity and token price for selected token
 }
 
-// Function to convert BNB to USDT and calculate the difference
+// Function to convert BNB to USDT and calculate the difference using value from `sendSection`
 function convertBnbToUsdtAndCalculate() {
-    const bnbAmount = document.getElementById('bnb-amount').value;
+    const bnbAmount = document.getElementById('amount').value;  // Get value from the sendSection
 
     if (bnbAmount && bnbPrice) {
         // Convert BNB to USDT
