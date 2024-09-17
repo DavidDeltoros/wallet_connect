@@ -27,26 +27,17 @@
         <div id="sendSection" style="display:none;">
             <input type="number" id="amount" placeholder="Enter amount of BNB" oninput="convertBnbToUsdtAndCalculate()" />
             <button id="sendButton">Buy Token</button>
-        </div>
+   
 
-
-        <!-- Dropdown menu to select a token -->
-        <div>
             <label for="token-selector">Select Token:</label>
             <select id="token-selector" onchange="handleTokenChange()">
                 <option value="pw3_UR">Token 1 (pw3_UR)</option>
                 <option value="pw3_CS">Token 2 (pw3_CS)</option>
                 <option value="pw3_NR">Token 3 (pw3_NR)</option>
             </select>
-        </div>
-
-        <!-- Display Current Token Price -->
-        <div>
+   
             <p>Current Token Price: <span id="token-price">Loading...</span></p>
-        </div>
 
-        <!-- BNB to USDT Converter -->
-        <div>
             <p>Equivalent USDT: <span id="usdt-value">0</span></p>
             <p>Get Tokens: <span id="token-difference">0</span></p>
         </div>
