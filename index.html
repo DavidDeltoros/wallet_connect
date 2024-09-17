@@ -28,11 +28,13 @@
             <p id="walletBalance">BNB Balance: Not Available</p>       
 
             <label for="token-selector">Select Token:</label>
+              
             <select id="token-selector" onchange="handleTokenChange(); convertBnbToUsdtAndCalculate();">
                 <option value="pw3_UR">Token 1 (pw3_UR)</option>
                 <option value="pw3_CS">Token 2 (pw3_CS)</option>
                 <option value="pw3_NR">Token 3 (pw3_NR)</option>
             </select>
+            <p>Current Token Price: <span id="token-price">Loading...</span></p>
             <p></p>
             <input type="number" id="amount" placeholder="Enter amount of BNB" oninput="convertBnbToUsdtAndCalculate()" />
             Equivalent USDT: <span id="usdt-value">0</span>
@@ -41,7 +43,7 @@
             <div>
                 <button id="sendButton">Buy Token</button>
             </div>
-            <p>Current Token Price: <span id="token-price">Loading...</span></p>
+          
 
             <p>Get Tokens: <span id="token-difference">0</span></p>
         </div>
