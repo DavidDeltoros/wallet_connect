@@ -1,35 +1,80 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Wallet Connect</title>
-  <script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3-provider@1.7.1/dist/umd/index.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
-  <script src="index.js"></script>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wallet Connect, Token Selection & Conversion</title>
+  
+    <!-- Link to external CSS -->
+    <link rel="stylesheet" href="style.css">
+  
+    <!-- Web3.js Library -->
+    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+    
+    <!-- Link to external JavaScript files for wallet and token functionality -->
+    <script src="walletFunctions.js"></script>
+    <script src="liquidityChecker.js"></script>
+    <script src="config.js"></script>
+    <script src="converter.js"></script>
 </head>
 <body>
-  <div id="mydiv">
-   
-      <label for="fromAddress"  class="Heading">Your Connected Wallet Address:</label>
-      <p id="address"></p>
-   
-  
-  <!-- <input type="text" class="address" name="fromAddress" id ="address"><br><br> -->
-  <span id="labelIndent">
-    <label for="toAddress" class="Heading">To Address:</label>
-    <input type="text" class="toAddress address" id="indent" name="toAddress"><br><br>
-  </span>
- 
-  
-  <button onclick="connectWC()">Connect Wallet</button>
-  <button onclick="send()">Send Transaction</button>
-  <button onclick="disconnect()">Disconnect Wallet </button>
-</div>
+    <div class="container">
+        <!-- Wallet Connection Section -->
+        <button id="connectWalletButton">Connect Wallet</button>
+        <p id="walletAddress">Wallet Address: Not Connected</p>
+        <p id="walletBalance">BNB Balance: Not Available</p>
 
+          <!-- This section takes BNB amount from 'sendSection' -->
+        <div id="sendSection" style="display:none;">
+            <input type="number" id="amount" placeholder="Enter amount of BNB" oninput="convertBnbToUsdtAndCalculate()" />
+            <button id="sendButton">Send BNB</button>
+        </div>
+
+        <!-- Token Selection and Conversion Section -->
+        <h1>Convert BNB to USDT & token Calculation</h1>
+
+        <!-- Dropdown menu to select a token -->
+        <div>
+            <label for="token-selector">Select Token:</label>
+            <select id="token-selector" onchange="handleTokenChange()">
+                <option value="pw3_UR">Token 1 (pw3_UR)</option>
+                <option value="pw3_CS">Token 2 (pw3_CS)</option>
+                <option value="pw3_NR">Token 3 (pw3_NR)</option>
+            </select>
+        </div>
+
+        <!-- Display Current Token Price -->
+        <div>
+            <p>Current Token Price: <span id="token-price">Loading...</span></p>
+            <p>WBnB Liquidity: <span id="wbnb-liquidity">Loading...</span></p>
+            <p>Token Liquidity: <span id="token-liquidity">Loading...</span></p>
+        </div>
+
+        <!-- BNB to USDT Converter -->
+        <div>
+            <p>Equivalent USDT: <span id="usdt-value">0</span></p>
+            <p>Difference (TokenResult - TokenLiquidity): <span id="token-difference">0</span></p>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        let account;
+        const connectWalletButton = document.getElementById("connectWalletButton");
+        const sendButton = document.getElementById("sendButton");
+        const sendSection = document.getElementById("sendSection");
+        const walletAddressDisplay = document.getElementById("walletAddress");
+        const walletBalanceDisplay = document.getElementById("walletBalance");
+        const amountInput = document.getElementById("amount");
+
+        amountInput.addEventListener("input", (event) => {
+            const typedValue = event.target.value;
+            console.log("Current typed value: ", typedValue);
+        });
+
+        connectWalletButton.addEventListener('click', connectWallet);
+        sendButton.addEventListener('click', send);
+
+        displayLiquidity();  // Token functionality
+    </script>
 </body>
 </html>
-
-
-
