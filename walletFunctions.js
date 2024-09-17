@@ -9,7 +9,7 @@ async function connectWallet() {
             // Request account access if MetaMask is available
             const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
             userAccount = accounts[0];
-            walletAddressDisplay.textContent = `Wallet Address: ${userAccount}`;
+            
             console.log("Connected with MetaMask: ", userAccount);
 
             // Fetch and display BNB balance
