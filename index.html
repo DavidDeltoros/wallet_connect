@@ -21,12 +21,13 @@
     <div class="container">
         <!-- Wallet Connection Section -->
         <button id="connectWalletButton">Connect Wallet</button>
-        <p id="walletBalance">BNB Balance: Not Available</p>
+        
 
           <!-- This section takes BNB amount from 'sendSection' -->
         <div id="sendSection" style="display:none;">
+            <p id="walletBalance">BNB Balance: Not Available</p>
             <input type="number" id="amount" placeholder="Enter amount of BNB" oninput="convertBnbToUsdtAndCalculate()" />
-            <button id="sendButton">Buy Token</button>
+            
    
 
             <label for="token-selector">Select Token:</label>
@@ -35,7 +36,9 @@
                 <option value="pw3_CS">Token 2 (pw3_CS)</option>
                 <option value="pw3_NR">Token 3 (pw3_NR)</option>
             </select>
-   
+            <div>
+                <button id="sendButton">Buy Token</button>
+            </div>
             <p>Current Token Price: <span id="token-price">Loading...</span></p>
 
             <p>Equivalent USDT: <span id="usdt-value">0</span></p>
