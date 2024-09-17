@@ -24,8 +24,9 @@
         <p id="walletAddress">Wallet Address: Not Connected</p>
         <p id="walletBalance">BNB Balance: Not Available</p>
 
+          <!-- This section takes BNB amount from 'sendSection' -->
         <div id="sendSection" style="display:none;">
-            <input type="number" id="amount" placeholder="Enter amount of BNB" />
+            <input type="number" id="amount" placeholder="Enter amount of BNB" oninput="convertBnbToUsdtAndCalculate()" />
             <button id="sendButton">Send BNB</button>
         </div>
 
